@@ -1,0 +1,28 @@
+name: Publish github-action-get-authkey-base image to ghcr.io
+on: workflow_dispatch
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login
+        uses: docker/login-action@3da7dc6e2b31f99ef2cb9fb4c50fb0971e0d0139
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_PACKAGE_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@3a3620ed496c1116d5e4f84369efa28aebea8844
+        with:
+          context: .
+          file: get-authkey-base/Dockerfile
+          push: false
+          tags: latest
